@@ -31,8 +31,8 @@
     }
     button.action:hover { background:#ff8833; }
     
-    table { 
-        width:100%; margin-top:20px; border-collapse:collapse; 
+    table {
+        width:100%; margin-top:20px; border-collapse:collapse;
         background:#222; border-radius:8px; overflow:hidden;
     }
     th { background:#ff6600; color:#000; padding:12px; border:1px solid #444; font-weight:bold; }
@@ -74,14 +74,14 @@
     .stat-label { font-size:14px; color:#ccc; margin-top:5px; }
     
     .ferramentas-selecionadas {
-        background:#1a1a1a; padding:15px; border-radius:8px; 
+        background:#1a1a1a; padding:15px; border-radius:8px;
         border:2px solid #ff6600; margin:15px 0;
     }
     .ferramentas-selecionadas h3 {
         color:#ff6600; margin-top:0; margin-bottom:15px; font-size:18px;
     }
     .badge-count {
-        background:#ff6600; color:#000; padding:3px 10px; 
+        background:#ff6600; color:#000; padding:3px 10px;
         border-radius:12px; font-size:12px; font-weight:bold; margin-left:10px;
     }
     
@@ -161,9 +161,10 @@
     <table id="tabelaEstoque">
         <thead>
             <tr>
-                <th>Ferramenta</th>
+                <th>ID</th>
+                <th>Nome</th>
                 <th>Quantidade Total</th>
-                <th>Disponível</th>
+                <th>Disponíveis</th>
                 <th>Emprestadas</th>
                 <th>Ações</th>
             </tr>
@@ -176,79 +177,67 @@
     <h2>Registrar Empréstimo</h2>
     
     <div class="form-group">
-        <label>Nome da Pessoa</label>
-        <input type="text" id="nomeEmprestimo" placeholder="Nome completo">
-    </div>
-    
-    <h3 style="margin-top:25px;">Selecionar Ferramentas</h3>
-    
-    <div class="form-group">
-        <label>🔍 Pesquisar Ferramenta</label>
-        <input type="text" id="pesquisaFerramenta" placeholder="Digite para buscar..." oninput="filtrarFerramentas()">
+        <label>Nome do Solicitante</label>
+        <input type="text" id="nomeSolicitante" placeholder="Nome completo">
     </div>
     
     <div class="form-group">
-        <label>Ferramenta</label>
-        <select id="ferramentaEmprestimo">
-            <option value="">Selecione uma ferramenta</option>
-        </select>
+        <label>Documento/Matrícula</label>
+        <input type="text" id="documentoSolicitante" placeholder="CPF ou matrícula">
     </div>
     
-    <div class="form-group">
-        <label>Quantidade</label>
-        <input type="number" id="quantidadeEmprestimo" min="1" value="1">
+    <div class="ferramentas-selecionadas">
+        <h3>Ferramentas Selecionadas <span class="badge-count" id="contadorSelecionadas">0</span></h3>
+        <div id="listaFerramentasSelecionadas"></div>
     </div>
     
-    <button class="action btn-add-ferramenta" id="btnAdicionarFerramenta" onclick="adicionarFerramentaLista()" style="background:#333; margin-bottom:20px;">➕ Adicionar à Lista</button>
+    <h3>Selecionar Ferramentas</h3>
+    <table id="tabelaEmprestimo">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Disponíveis</th>
+                <th>Quantidade</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
     
-    <div id="notificacaoContainer"></div>
-    
-    <div id="listaFerramentasEmprestimo"></div>
-    
-    <button class="action" onclick="abrirPopupAssinatura('emprestimo')">✍️ Registrar Empréstimo com Assinatura</button>
+    <button class="action" onclick="abrirPopupAssinatura('emprestimo')">Finalizar Empréstimo</button>
 </div>
 
 <div id="devolucao" class="page">
     <h2>Registrar Devolução</h2>
     
     <div class="form-group">
-        <label>Empréstimo</label>
-        <select id="emprestimoSelect" onchange="preencherDadosDevolucao()">
-            <option value="">Selecione o empréstimo</option>
-        </select>
+        <label>Buscar Empréstimo por Nome ou Documento</label>
+        <input type="text" id="buscaEmprestimo" placeholder="Digite o nome ou documento" oninput="buscarEmprestimos()">
     </div>
     
-    <div class="form-group">
-        <label>Nome da Pessoa</label>
-        <input type="text" id="nomeDevolucao" disabled>
-    </div>
-    
-    <div class="form-group">
-        <label>Ferramenta</label>
-        <input type="text" id="ferramentaDevolucao" disabled>
-    </div>
-    
-    <div class="form-group">
-        <label>Quantidade</label>
-        <input type="number" id="quantidadeDevolucao" disabled>
-    </div>
-    
-    <button class="action" onclick="abrirPopupAssinatura('devolucao')">Registrar Devolução</button>
+    <div id="listaEmprestimosAbertos"></div>
 </div>
 
 <div id="historico" class="page">
     <h2>Histórico de Movimentações</h2>
     
+    <div class="form-group">
+        <label>Filtrar por Tipo</label>
+        <select id="filtroTipo" onchange="renderizarHistorico()">
+            <option value="todos">Todos</option>
+            <option value="emprestimo">Empréstimos</option>
+            <option value="devolucao">Devoluções</option>
+        </select>
+    </div>
+    
     <table id="tabelaHistorico">
         <thead>
             <tr>
+                <th>Data/Hora</th>
                 <th>Tipo</th>
-                <th>Pessoa</th>
-                <th>Ferramenta</th>
-                <th>Qtd</th>
-                <th>Data/Hora Empréstimo</th>
-                <th>Data/Hora Devolução</th>
-                <th>Status</th>
+                <th>Solicitante</th>
+                <th>Ferramentas</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -257,496 +246,440 @@
 
 <div id="popupFundo">
     <div id="popup">
-        <h3>Assinatura</h3>
-        <p>Por favor, assine no campo abaixo:</p>
+        <h2>Assinatura Digital</h2>
+        <p>Por favor, assine abaixo para confirmar:</p>
         <canvas id="signaturePad"></canvas>
         <button class="action" onclick="limparAssinatura()">Limpar</button>
-        <button class="action" onclick="confirmarAssinatura()">Confirmar</button>
-        <button class="action" onclick="fecharPopup()" style="background:#666;">Cancelar</button>
+        <button class="action" onclick="salvarAssinatura()">Confirmar</button>
+        <button class="action" onclick="fecharPopup()">Cancelar</button>
     </div>
 </div>
 
 <script>
-let estoque = JSON.parse(localStorage.getItem('estoque')) || [];
-let emprestimos = JSON.parse(localStorage.getItem('emprestimos')) || [];
-let historico = JSON.parse(localStorage.getItem('historico')) || [];
+let estoque = [];
+let historico = [];
+let emprestimoAtual = {
+    solicitante: '',
+    documento: '',
+    ferramentas: []
+};
 let signaturePad;
 let tipoAssinatura = '';
-let ferramentasSelecionadas = [];
+let devolucaoAtual = null;
+
+function inicializar() {
+    carregarDados();
+    renderizarEstoque();
+    renderizarTabelaEmprestimo();
+    atualizarEstatisticas();
+    
+    const canvas = document.getElementById('signaturePad');
+    signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+    });
+    
+    window.addEventListener('resize', redimensionarCanvas);
+    redimensionarCanvas();
+}
+
+function redimensionarCanvas() {
+    const canvas = document.getElementById('signaturePad');
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext('2d').scale(ratio, ratio);
+    signaturePad.clear();
+}
+
+function salvarDados() {
+    localStorage.setItem('estoque', JSON.stringify(estoque));
+    localStorage.setItem('historico', JSON.stringify(historico));
+}
+
+function carregarDados() {
+    const estoqueData = localStorage.getItem('estoque');
+    const historicoData = localStorage.getItem('historico');
+    
+    if (estoqueData) estoque = JSON.parse(estoqueData);
+    if (historicoData) historico = JSON.parse(historicoData);
+}
 
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    
     document.getElementById(pageId).classList.add('active');
     event.target.classList.add('active');
     
-    if(pageId === 'estoque') atualizarTabelaEstoque();
-    if(pageId === 'emprestimo') {
-        document.getElementById('pesquisaFerramenta').value = '';
-        atualizarSelectFerramentas();
-    }
-    if(pageId === 'devolucao') atualizarSelectEmprestimos();
-    if(pageId === 'historico') atualizarTabelaHistorico();
+    if (pageId === 'emprestimo') renderizarTabelaEmprestimo();
+    if (pageId === 'devolucao') renderizarDevolucoes();
+    if (pageId === 'historico') renderizarHistorico();
 }
 
 function adicionarFerramenta() {
     const nome = document.getElementById('nomeFerramenta').value.trim();
     const quantidade = parseInt(document.getElementById('quantidadeFerramenta').value);
     
-    if(!nome || quantidade < 1) {
+    if (!nome || quantidade < 1) {
         alert('Preencha todos os campos corretamente!');
         return;
     }
     
     const ferramentaExistente = estoque.find(f => f.nome.toLowerCase() === nome.toLowerCase());
     
-    if(ferramentaExistente) {
-        ferramentaExistente.quantidade += quantidade;
+    if (ferramentaExistente) {
+        ferramentaExistente.quantidadeTotal += quantidade;
+        ferramentaExistente.quantidadeDisponivel += quantidade;
     } else {
         estoque.push({
             id: Date.now(),
             nome: nome,
-            quantidade: quantidade,
-            emprestadas: 0
+            quantidadeTotal: quantidade,
+            quantidadeDisponivel: quantidade,
+            quantidadeEmprestada: 0
         });
     }
     
-    salvarDados();
     document.getElementById('nomeFerramenta').value = '';
     document.getElementById('quantidadeFerramenta').value = '1';
-    atualizarTabelaEstoque();
-    alert('Ferramenta adicionada com sucesso!');
+    
+    salvarDados();
+    renderizarEstoque();
+    atualizarEstatisticas();
+    
+    mostrarNotificacao('Ferramenta adicionada com sucesso!');
 }
 
-function atualizarTabelaEstoque() {
+function renderizarEstoque() {
     const tbody = document.querySelector('#tabelaEstoque tbody');
     tbody.innerHTML = '';
     
-    let totalFerr = 0;
-    let totalEmp = 0;
-    let totalDisp = 0;
-    
-    const estoqueOrdenado = [...estoque].sort((a, b) => a.nome.localeCompare(b.nome));
-    
-    estoqueOrdenado.forEach(ferramenta => {
-        const disponiveis = ferramenta.quantidade - ferramenta.emprestadas;
-        totalFerr += ferramenta.quantidade;
-        totalEmp += ferramenta.emprestadas;
-        totalDisp += disponiveis;
-        
+    estoque.forEach(f => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${ferramenta.nome}</td>
-            <td>${ferramenta.quantidade}</td>
-            <td>${disponiveis}</td>
-            <td>${ferramenta.emprestadas}</td>
+            <td>${f.id}</td>
+            <td>${f.nome}</td>
+            <td>${f.quantidadeTotal}</td>
+            <td>${f.quantidadeDisponivel}</td>
+            <td>${f.quantidadeEmprestada}</td>
             <td>
-                <button class="btn-small" onclick="removerFerramenta(${ferramenta.id})">Remover</button>
+                <button class="btn-small" onclick="editarFerramenta(${f.id})">Editar</button>
+                <button class="btn-small" onclick="removerFerramenta(${f.id})">Remover</button>
             </td>
         `;
         tbody.appendChild(tr);
     });
-    
-    document.getElementById('totalFerramentas').textContent = totalFerr;
-    document.getElementById('totalEmprestadas').textContent = totalEmp;
-    document.getElementById('totalDisponiveis').textContent = totalDisp;
 }
 
 function removerFerramenta(id) {
-    const ferramenta = estoque.find(f => f.id === id);
-    if(ferramenta && ferramenta.emprestadas > 0) {
-        alert('Não é possível remover. Existem unidades emprestadas!');
-        return;
-    }
+    if (!confirm('Deseja realmente remover esta ferramenta?')) return;
     
-    if(confirm('Deseja realmente remover esta ferramenta?')) {
-        estoque = estoque.filter(f => f.id !== id);
-        salvarDados();
-        atualizarTabelaEstoque();
-    }
+    estoque = estoque.filter(f => f.id !== id);
+    salvarDados();
+    renderizarEstoque();
+    atualizarEstatisticas();
 }
 
-function atualizarSelectFerramentas() {
-    const select = document.getElementById('ferramentaEmprestimo');
-    const inputPesquisa = document.getElementById('pesquisaFerramenta');
+function renderizarTabelaEmprestimo() {
+    const tbody = document.querySelector('#tabelaEmprestimo tbody');
+    tbody.innerHTML = '';
     
-    if(!select || !inputPesquisa) return;
-    
-    const pesquisa = inputPesquisa.value.toLowerCase();
-    
-    select.innerHTML = '<option value="">Selecione uma ferramenta</option>';
-    
-    const estoqueOrdenado = [...estoque].sort((a, b) => a.nome.localeCompare(b.nome));
-    
-    const ferramentasFiltradas = estoqueOrdenado.filter(ferramenta => {
-        const disponiveis = ferramenta.quantidade - ferramenta.emprestadas;
-        const correspondePesquisa = ferramenta.nome.toLowerCase().includes(pesquisa);
-        return disponiveis > 0 && correspondePesquisa;
-    });
-    
-    if(ferramentasFiltradas.length === 0 && pesquisa) {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'Nenhuma ferramenta encontrada';
-        select.appendChild(option);
-        return;
-    }
-    
-    ferramentasFiltradas.forEach(ferramenta => {
-        const disponiveis = ferramenta.quantidade - ferramenta.emprestadas;
-        const option = document.createElement('option');
-        option.value = ferramenta.id;
-        option.textContent = `${ferramenta.nome} (${disponiveis} disponíveis)`;
-        select.appendChild(option);
-    });
-    
-    if(ferramentasFiltradas.length === 0 && !pesquisa) {
-        select.innerHTML = '<option value="">Nenhuma ferramenta disponível no estoque</option>';
-    }
-}
-
-function filtrarFerramentas() {
-    atualizarSelectFerramentas();
-}
-
-function adicionarFerramentaLista() {
-    const select = document.getElementById('ferramentaEmprestimo');
-    const ferramentaId = select.value;
-    const quantidade = parseInt(document.getElementById('quantidadeEmprestimo').value);
-    
-    if(!ferramentaId) {
-        alert('⚠️ Selecione uma ferramenta da lista!');
-        return;
-    }
-    
-    if(!quantidade || quantidade < 1) {
-        alert('⚠️ Digite uma quantidade válida!');
-        return;
-    }
-    
-    const ferramenta = estoque.find(f => f.id == ferramentaId);
-    
-    if(!ferramenta) {
-        alert('⚠️ Ferramenta não encontrada no estoque!');
-        return;
-    }
-    
-    const disponiveis = ferramenta.quantidade - ferramenta.emprestadas;
-    
-    const quantidadeJaSelecionada = ferramentasSelecionadas
-        .filter(f => f.ferramentaId == ferramentaId)
-        .reduce((total, f) => total + f.quantidade, 0);
-    
-    if(quantidade + quantidadeJaSelecionada > disponiveis) {
-        alert(`⚠️ Quantidade não disponível!\n\nDisponível: ${disponiveis}\nJá selecionado: ${quantidadeJaSelecionada}\nRestante: ${disponiveis - quantidadeJaSelecionada}`);
-        return;
-    }
-    
-    ferramentasSelecionadas.push({
-        ferramentaId: parseInt(ferramentaId),
-        ferramentaNome: ferramenta.nome,
-        quantidade: quantidade
-    });
-    
-    mostrarNotificacaoAdicionado(ferramenta.nome, quantidade);
-    
-    const btnAdicionar = document.getElementById('btnAdicionarFerramenta');
-    if(btnAdicionar) {
-        btnAdicionar.classList.add('sucesso');
-        setTimeout(() => {
-            btnAdicionar.classList.remove('sucesso');
-        }, 1000);
-    }
-    
-    select.value = '';
-    document.getElementById('quantidadeEmprestimo').value = '1';
-    
-    const inputPesquisa = document.getElementById('pesquisaFerramenta');
-    if(inputPesquisa) {
-        inputPesquisa.value = '';
-    }
-    
-    atualizarListaFerramentasEmprestimo();
-    atualizarSelectFerramentas();
-}
-
-function mostrarNotificacaoAdicionado(nomeFerramenta, quantidade) {
-    const container = document.getElementById('notificacaoContainer');
-    
-    const notif = document.createElement('div');
-    notif.className = 'notificacao-adicionado';
-    notif.innerHTML = `
-        <div style="width:24px; height:24px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#007bff; font-weight:bold;">✓</div>
-        <div>
-            <strong>${nomeFerramenta}</strong> adicionado!<br>
-            <small>Quantidade: ${quantidade}</small>
-        </div>
-    `;
-    
-    container.appendChild(notif);
-    
-    setTimeout(() => {
-        notif.style.animation = 'slideIn 0.3s ease-out reverse';
-        setTimeout(() => {
-            container.removeChild(notif);
-        }, 300);
-    }, 2500);
-}
-
-function atualizarListaFerramentasEmprestimo() {
-    const container = document.getElementById('listaFerramentasEmprestimo');
-    
-    if(ferramentasSelecionadas.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    let html = `<div class="ferramentas-selecionadas">
-        <h3>📋 Ferramentas Selecionadas <span class="badge-count">${ferramentasSelecionadas.length}</span></h3>
-        <table><thead><tr><th>Ferramenta</th><th>Quantidade</th><th>Ações</th></tr></thead><tbody>`;
-    
-    ferramentasSelecionadas.forEach((item, index) => {
-        html += `
-            <tr>
-                <td><strong>${item.ferramentaNome}</strong></td>
-                <td>${item.quantidade}</td>
-                <td><button class="btn-small" onclick="removerFerramentaLista(${index})" style="background:#dc3545;">❌ Remover</button></td>
-            </tr>
+    estoque.filter(f => f.quantidadeDisponivel > 0).forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${f.nome}</td>
+            <td>${f.quantidadeDisponivel}</td>
+            <td><input type="number" id="qtd_${f.id}" min="1" max="${f.quantidadeDisponivel}" value="1" style="width:80px;"></td>
+            <td><button class="btn-small btn-add-ferramenta" onclick="adicionarAoEmprestimo(${f.id})">Adicionar</button></td>
         `;
+        tbody.appendChild(tr);
     });
-    
-    html += '</tbody></table></div>';
-    container.innerHTML = html;
 }
 
-function removerFerramentaLista(index) {
-    ferramentasSelecionadas.splice(index, 1);
-    atualizarListaFerramentasEmprestimo();
+function adicionarAoEmprestimo(id) {
+    const ferramenta = estoque.find(f => f.id === id);
+    const quantidade = parseInt(document.getElementById(`qtd_${id}`).value);
+    
+    if (quantidade > ferramenta.quantidadeDisponivel) {
+        alert('Quantidade indisponível!');
+        return;
+    }
+    
+    const existente = emprestimoAtual.ferramentas.find(f => f.id === id);
+    if (existente) {
+        existente.quantidade += quantidade;
+    } else {
+        emprestimoAtual.ferramentas.push({
+            id: ferramenta.id,
+            nome: ferramenta.nome,
+            quantidade: quantidade
+        });
+    }
+    
+    renderizarFerramentasSelecionadas();
+    
+    const btn = event.target;
+    btn.classList.add('sucesso');
+    setTimeout(() => btn.classList.remove('sucesso'), 1000);
+    
+    mostrarNotificacao(`${ferramenta.nome} (${quantidade}x) adicionado!`);
+}
+
+function renderizarFerramentasSelecionadas() {
+    const container = document.getElementById('listaFerramentasSelecionadas');
+    const contador = document.getElementById('contadorSelecionadas');
+    
+    contador.textContent = emprestimoAtual.ferramentas.length;
+    
+    if (emprestimoAtual.ferramentas.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;">Nenhuma ferramenta selecionada</p>';
+        return;
+    }
+    
+    container.innerHTML = emprestimoAtual.ferramentas.map(f => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#222;margin:5px 0;border-radius:5px;">
+            <span><strong>${f.nome}</strong> - Quantidade: ${f.quantidade}</span>
+            <button class="btn-small" onclick="removerDoEmprestimo(${f.id})">Remover</button>
+        </div>
+    `).join('');
+}
+
+function removerDoEmprestimo(id) {
+    emprestimoAtual.ferramentas = emprestimoAtual.ferramentas.filter(f => f.id !== id);
+    renderizarFerramentasSelecionadas();
 }
 
 function abrirPopupAssinatura(tipo) {
-    tipoAssinatura = tipo;
+    const solicitante = document.getElementById('nomeSolicitante').value.trim();
+    const documento = document.getElementById('documentoSolicitante').value.trim();
     
-    if(tipo === 'emprestimo') {
-        const nome = document.getElementById('nomeEmprestimo').value.trim();
-        
-        if(!nome) {
-            alert('⚠️ Preencha o nome da pessoa!');
-            return;
-        }
-        
-        if(ferramentasSelecionadas.length === 0) {
-            alert('⚠️ Adicione pelo menos uma ferramenta à lista!');
-            return;
-        }
-        
-    } else if(tipo === 'devolucao') {
-        const emprestimoId = document.getElementById('emprestimoSelect').value;
-        if(!emprestimoId) {
-            alert('⚠️ Selecione um empréstimo para devolver!');
-            return;
-        }
+    if (!solicitante || !documento) {
+        alert('Preencha o nome e documento do solicitante!');
+        return;
     }
     
-    document.getElementById('popupFundo').classList.add('active');
+    if (emprestimoAtual.ferramentas.length === 0) {
+        alert('Selecione ao menos uma ferramenta!');
+        return;
+    }
     
-    setTimeout(() => {
-        const canvas = document.getElementById('signaturePad');
-        signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)',
-            penColor: 'rgb(0, 0, 0)'
-        });
-        resizeCanvas();
-    }, 100);
+    emprestimoAtual.solicitante = solicitante;
+    emprestimoAtual.documento = documento;
+    tipoAssinatura = tipo;
+    
+    document.getElementById('popupFundo').classList.add('active');
+    signaturePad.clear();
 }
 
-function resizeCanvas() {
-    const canvas = document.getElementById('signaturePad');
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
-    signaturePad.clear();
+function fecharPopup() {
+    document.getElementById('popupFundo').classList.remove('active');
 }
 
 function limparAssinatura() {
     signaturePad.clear();
 }
 
-function confirmarAssinatura() {
-    if(signaturePad.isEmpty()) {
-        alert('Por favor, forneça uma assinatura!');
+function salvarAssinatura() {
+    if (signaturePad.isEmpty()) {
+        alert('Por favor, assine antes de confirmar!');
         return;
     }
     
-    const assinaturaData = signaturePad.toDataURL();
+    const assinatura = signaturePad.toDataURL();
     
-    if(tipoAssinatura === 'emprestimo') {
-        registrarEmprestimo(assinaturaData);
-    } else if(tipoAssinatura === 'devolucao') {
-        registrarDevolucao(assinaturaData);
+    if (tipoAssinatura === 'emprestimo') {
+        finalizarEmprestimo(assinatura);
+    } else if (tipoAssinatura === 'devolucao') {
+        finalizarDevolucao(assinatura);
     }
     
     fecharPopup();
 }
 
-function registrarEmprestimo(assinatura) {
-    const nome = document.getElementById('nomeEmprestimo').value.trim();
-    
-    ferramentasSelecionadas.forEach(item => {
-        const ferramenta = estoque.find(f => f.id === item.ferramentaId);
-        ferramenta.emprestadas += item.quantidade;
-        
-        const emprestimo = {
-            id: Date.now() + Math.random(),
-            nome: nome,
-            ferramentaId: item.ferramentaId,
-            ferramentaNome: item.ferramentaNome,
-            quantidade: item.quantidade,
-            dataEmprestimo: new Date().toLocaleString('pt-BR'),
-            assinaturaEmprestimo: assinatura,
-            devolvido: false
-        };
-        
-        emprestimos.push(emprestimo);
-        historico.push({...emprestimo, tipo: 'Empréstimo'});
+function finalizarEmprestimo(assinatura) {
+    emprestimoAtual.ferramentas.forEach(f => {
+        const ferramenta = estoque.find(item => item.id === f.id);
+        ferramenta.quantidadeDisponivel -= f.quantidade;
+        ferramenta.quantidadeEmprestada += f.quantidade;
     });
+    
+    const registro = {
+        id: Date.now(),
+        tipo: 'emprestimo',
+        solicitante: emprestimoAtual.solicitante,
+        documento: emprestimoAtual.documento,
+        ferramentas: [...emprestimoAtual.ferramentas],
+        assinatura: assinatura,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        status: 'ativo'
+    };
+    
+    historico.push(registro);
+    
+    emprestimoAtual = { solicitante: '', documento: '', ferramentas: [] };
+    document.getElementById('nomeSolicitante').value = '';
+    document.getElementById('documentoSolicitante').value = '';
     
     salvarDados();
+    renderizarEstoque();
+    renderizarTabelaEmprestimo();
+    renderizarFerramentasSelecionadas();
+    atualizarEstatisticas();
     
-    const totalFerramentas = ferramentasSelecionadas.length;
-    
-    document.getElementById('nomeEmprestimo').value = '';
-    document.getElementById('quantidadeEmprestimo').value = '1';
-    ferramentasSelecionadas = [];
-    atualizarListaFerramentasEmprestimo();
-    
-    alert(`✅ Empréstimo registrado com sucesso! Total: ${totalFerramentas} ferramenta(s)`);
+    alert('Empréstimo registrado com sucesso!');
 }
 
-function atualizarSelectEmprestimos() {
-    const select = document.getElementById('emprestimoSelect');
-    select.innerHTML = '<option value="">Selecione o empréstimo</option>';
+function renderizarDevolucoes() {
+    const container = document.getElementById('listaEmprestimosAbertos');
+    const emprestimosAtivos = historico.filter(h => h.tipo === 'emprestimo' && h.status === 'ativo');
     
-    const emprestimosPendentes = emprestimos.filter(e => !e.devolvido);
-    
-    if(emprestimosPendentes.length === 0) {
-        select.innerHTML = '<option value="">Nenhum empréstimo pendente</option>';
+    if (emprestimosAtivos.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Nenhum empréstimo ativo no momento.</p>';
         return;
     }
     
-    emprestimosPendentes.forEach(emprestimo => {
-        const option = document.createElement('option');
-        option.value = emprestimo.id;
-        option.textContent = `${emprestimo.nome} - ${emprestimo.ferramentaNome} (${emprestimo.quantidade}) - ${emprestimo.dataEmprestimo}`;
-        select.appendChild(option);
+    container.innerHTML = emprestimosAtivos.map(emp => `
+        <div style="background:#222;padding:20px;margin:15px 0;border-radius:8px;border:2px solid #ff6600;">
+            <h3 style="color:#ff6600;margin-top:0;">${emp.solicitante}</h3>
+            <p><strong>Documento:</strong> ${emp.documento}</p>
+            <p><strong>Data do Empréstimo:</strong> ${emp.dataHora}</p>
+            <h4>Ferramentas:</h4>
+            <ul>
+                ${emp.ferramentas.map(f => `<li>${f.nome} - Quantidade: ${f.quantidade}</li>`).join('')}
+            </ul>
+            <button class="action" onclick="iniciarDevolucao(${emp.id})">Registrar Devolução</button>
+        </div>
+    `).join('');
+}
+
+function buscarEmprestimos() {
+    const busca = document.getElementById('buscaEmprestimo').value.toLowerCase();
+    const container = document.getElementById('listaEmprestimosAbertos');
+    const emprestimosAtivos = historico.filter(h => 
+        h.tipo === 'emprestimo' && 
+        h.status === 'ativo' &&
+        (h.solicitante.toLowerCase().includes(busca) || h.documento.toLowerCase().includes(busca))
+    );
+    
+    if (emprestimosAtivos.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Nenhum empréstimo encontrado.</p>';
+        return;
+    }
+    
+    container.innerHTML = emprestimosAtivos.map(emp => `
+        <div style="background:#222;padding:20px;margin:15px 0;border-radius:8px;border:2px solid #ff6600;">
+            <h3 style="color:#ff6600;margin-top:0;">${emp.solicitante}</h3>
+            <p><strong>Documento:</strong> ${emp.documento}</p>
+            <p><strong>Data do Empréstimo:</strong> ${emp.dataHora}</p>
+            <h4>Ferramentas:</h4>
+            <ul>
+                ${emp.ferramentas.map(f => `<li>${f.nome} - Quantidade: ${f.quantidade}</li>`).join('')}
+            </ul>
+            <button class="action" onclick="iniciarDevolucao(${emp.id})">Registrar Devolução</button>
+        </div>
+    `).join('');
+}
+
+function iniciarDevolucao(emprestimoId) {
+    devolucaoAtual = historico.find(h => h.id === emprestimoId);
+    tipoAssinatura = 'devolucao';
+    
+    document.getElementById('popupFundo').classList.add('active');
+    signaturePad.clear();
+}
+
+function finalizarDevolucao(assinatura) {
+    devolucaoAtual.ferramentas.forEach(f => {
+        const ferramenta = estoque.find(item => item.id === f.id);
+        ferramenta.quantidadeDisponivel += f.quantidade;
+        ferramenta.quantidadeEmprestada -= f.quantidade;
     });
-}
-
-function preencherDadosDevolucao() {
-    const emprestimoSelect = document.getElementById('emprestimoSelect');
-    const emprestimoId = emprestimoSelect.value;
     
-    if(!emprestimoId) {
-        document.getElementById('nomeDevolucao').value = '';
-        document.getElementById('ferramentaDevolucao').value = '';
-        document.getElementById('quantidadeDevolucao').value = '';
-        return;
-    }
+    devolucaoAtual.status = 'devolvido';
     
-    const emprestimo = emprestimos.find(e => e.id == emprestimoId);
+    const registroDevolucao = {
+        id: Date.now(),
+        tipo: 'devolucao',
+        solicitante: devolucaoAtual.solicitante,
+        documento: devolucaoAtual.documento,
+        ferramentas: [...devolucaoAtual.ferramentas],
+        assinatura: assinatura,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        emprestimoOriginal: devolucaoAtual.id
+    };
     
-    if(emprestimo) {
-        document.getElementById('nomeDevolucao').value = emprestimo.nome;
-        document.getElementById('ferramentaDevolucao').value = emprestimo.ferramentaNome;
-        document.getElementById('quantidadeDevolucao').value = emprestimo.quantidade;
-    }
-}
-
-function registrarDevolucao(assinatura) {
-    const emprestimoSelect = document.getElementById('emprestimoSelect');
-    const emprestimoId = emprestimoSelect.value;
+    historico.push(registroDevolucao);
     
-    if(!emprestimoId) {
-        alert('⚠️ Erro ao processar devolução!');
-        return;
-    }
-    
-    const emprestimo = emprestimos.find(e => e.id == emprestimoId);
-    
-    if(!emprestimo) {
-        alert('⚠️ Empréstimo não encontrado!');
-        return;
-    }
-    
-    const ferramenta = estoque.find(f => f.id === emprestimo.ferramentaId);
-    
-    if(!ferramenta) {
-        alert('⚠️ Ferramenta não encontrada no estoque!');
-        return;
-    }
-    
-    ferramenta.emprestadas -= emprestimo.quantidade;
-    
-    if(ferramenta.emprestadas < 0) {
-        ferramenta.emprestadas = 0;
-    }
-    
-    emprestimo.devolvido = true;
-    emprestimo.dataDevolucao = new Date().toLocaleString('pt-BR');
-    emprestimo.assinaturaDevolucao = assinatura;
-    
-    historico.push({
-        ...emprestimo,
-        tipo: 'Devolução'
-    });
+    devolucaoAtual = null;
     
     salvarDados();
+    renderizarEstoque();
+    renderizarDevolucoes();
+    atualizarEstatisticas();
     
-    document.getElementById('emprestimoSelect').value = '';
-    document.getElementById('nomeDevolucao').value = '';
-    document.getElementById('ferramentaDevolucao').value = '';
-    document.getElementById('quantidadeDevolucao').value = '';
-    
-    alert(`✅ Devolução registrada com sucesso!\n${emprestimo.ferramentaNome} (${emprestimo.quantidade})`);
-    
-    atualizarSelectEmprestimos();
-    atualizarTabelaEstoque();
+    alert('Devolução registrada com sucesso!');
 }
 
-function atualizarTabelaHistorico() {
+function renderizarHistorico() {
     const tbody = document.querySelector('#tabelaHistorico tbody');
+    const filtro = document.getElementById('filtroTipo').value;
+    
+    let historicoFiltrado = historico;
+    if (filtro !== 'todos') {
+        historicoFiltrado = historico.filter(h => h.tipo === filtro);
+    }
+    
     tbody.innerHTML = '';
     
-    const historicoOrdenado = [...historico].reverse();
-    
-    historicoOrdenado.forEach(registro => {
+    historicoFiltrado.reverse().forEach(h => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${registro.tipo}</td>
-            <td>${registro.nome}</td>
-            <td>${registro.ferramentaNome}</td>
-            <td>${registro.quantidade}</td>
-            <td>${registro.dataEmprestimo || '-'}</td>
-            <td>${registro.dataDevolucao || '-'}</td>
-            <td>${registro.devolvido ? 'Devolvido' : 'Pendente'}</td>
+            <td>${h.dataHora}</td>
+            <td>${h.tipo === 'emprestimo' ? 'Empréstimo' : 'Devolução'}</td>
+            <td>${h.solicitante}</td>
+            <td>${h.ferramentas.map(f => `${f.nome} (${f.quantidade})`).join(', ')}</td>
+            <td><button class="btn-small" onclick="visualizarAssinatura('${h.assinatura}')">Ver Assinatura</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-function fecharPopup() {
-    document.getElementById('popupFundo').classList.remove('active');
-    signaturePad = null;
+function visualizarAssinatura(assinatura) {
+    const w = window.open('', '_blank', 'width=600,height=400');
+    w.document.write(`
+        <html>
+        <head><title>Assinatura</title></head>
+        <body style="margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#111;">
+            <img src="${assinatura}" style="max-width:90%;border:3px solid #ff6600;border-radius:10px;">
+        </body>
+        </html>
+    `);
 }
 
-function salvarDados() {
-    localStorage.setItem('estoque', JSON.stringify(estoque));
-    localStorage.setItem('emprestimos', JSON.stringify(emprestimos));
-    localStorage.setItem('historico', JSON.stringify(historico));
+function atualizarEstatisticas() {
+    const totalFerramentas = estoque.reduce((acc, f) => acc + f.quantidadeTotal, 0);
+    const totalEmprestadas = estoque.reduce((acc, f) => acc + f.quantidadeEmprestada, 0);
+    const totalDisponiveis = estoque.reduce((acc, f) => acc + f.quantidadeDisponivel, 0);
+    
+    document.getElementById('totalFerramentas').textContent = totalFerramentas;
+    document.getElementById('totalEmprestadas').textContent = totalEmprestadas;
+    document.getElementById('totalDisponiveis').textContent = totalDisponiveis;
 }
 
-atualizarTabelaEstoque();
+function mostrarNotificacao(mensagem) {
+    const notif = document.createElement('div');
+    notif.className = 'notificacao-adicionado';
+    notif.textContent = mensagem;
+    document.body.appendChild(notif);
+    
+    setTimeout(() => {
+        notif.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notif.remove(), 300);
+    }, 2000);
+}
+
+window.onload = inicializar;
 </script>
 
 </body>
